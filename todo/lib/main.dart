@@ -37,6 +37,14 @@ class _TodoListPageState extends State<TodoListPage> {
             return Card(
               child: ListTile(
                 title: Text(todoList[index]),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      todoList.removeAt(index);
+                    });
+                  },
+                ),
               ),
             );
           }),
