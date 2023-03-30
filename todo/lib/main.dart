@@ -56,13 +56,13 @@ class _TodoListPageState extends State<TodoListPage> {
                     title: Text(todo.title ?? ''),
                     subtitle: Text('Priority: ${todo.priority ?? ''}'),
                     trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      setState(() {
-                        ToDo().deleteTodo(todo.id!);
-                      });
-                    },
-                ),
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          ToDo().deleteTodo(todo.id!);
+                        });
+                      },
+                    ),
                   );
                 },
               );
