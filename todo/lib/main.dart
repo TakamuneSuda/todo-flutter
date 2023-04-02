@@ -122,13 +122,12 @@ class _TodoAddPageState extends State<TodoAddPage>{
                 });
               },
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('優先度'),
+                const SizedBox(width: 15,),
                 PriorityButton(
                   label: '低',
                   isSelected: _selectedPriority == TodoPriority.low,
@@ -260,9 +259,11 @@ class PriorityButton extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(5),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 8),
+        width: 70,
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.bold,
