@@ -73,11 +73,7 @@ class _TodoListPageState extends State<TodoListPage> {
               return TodoAddPage();
             })
           );
-          if(newListText != null && newListText != '') {
-            setState(() {
-              todoList.add(newListText);
-            });
-          }
+          setState(() {});
         },
         child: Icon(Icons.add),
       ),
@@ -150,10 +146,3 @@ class _TodoAddPageState extends State<TodoAddPage>{
     );
   }
 }
-
-final todoList = [
-  'ジャガイモを買う',
-  'にんじんを買う',
-  'ガソリンを入れる',
-  'お風呂に入る',
-];
