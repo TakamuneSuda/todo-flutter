@@ -4,9 +4,11 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ToDo {
-  final int id;
-  final String title;
-  final int priority;
+  final int? id;
+  final String? title;
+  final int? priority;
+
+  ToDo({this.id, this.title, this.priority});
 
   Map<String, dynamic> toMap(){
     return {
@@ -15,8 +17,6 @@ class ToDo {
       'priority': priority,
     };
   }
-
-  ToDo({required this.id, required this.title, required this.priority});
 
   Future<Database> openTodoDatabase() async {
     final String databasesPath = await getDatabasesPath();
@@ -32,20 +32,7 @@ class ToDo {
         ''');
       },
       version: 1,
-    ).then((db) async {
-    await db.transaction((txn) async {
-      await txn.rawInsert(
-          'INSERT INTO todo (title, priority) VALUES (?, ?)',
-          ['Task 1', 1]);
-      await txn.rawInsert(
-          'INSERT INTO todo (title, priority) VALUES (?, ?)',
-          ['Task 2', 2]);
-      await txn.rawInsert(
-          'INSERT INTO todo (title, priority) VALUES (?, ?)',
-          ['Task 3', 3]);
-    });
-    return db;
-    });
+    );
   }
 
   Future<List<ToDo>> getAllTodos() async {
@@ -69,5 +56,12 @@ class ToDo {
       );
   }
 
-
+  Future<void> deleteTodo(int id) async {
+    final Database db = await openTodoDatabase();
+    await db.delete(
+      'todo',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
 }
