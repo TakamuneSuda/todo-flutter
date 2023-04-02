@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:todo/database_helper.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final dbHelper = ToDo();
+  await dbHelper.openTodoDatabase();
+
   runApp(MyTodoApp());
 }
 
@@ -25,29 +30,41 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('リスト一覧'),
       ),
       body: Center(
-        child: ListView.builder(
-          itemCount: todoList.length,
-          itemBuilder: (context, index){
-            return Card(
-              child: ListTile(
-                title: Text(todoList[index]),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      todoList.removeAt(index);
-                    });
-                  },
+        child: FutureBuilder<List<ToDo>>(
+          future: ToDo().getAllTodos(),
+          builder: (BuildContext context, AsyncSnapshot<List<ToDo>> snapshot) {
+            if (snapshot.hasData) {
+              final todos = snapshot.data!;
+              return ListView.builder(
+                itemCount: todos.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final todo = todos[index];
+                  return ListTile(
+                    title: Text(todo.title ?? ''),
+                    subtitle: Text('Priority: ${todo.priority ?? ''}'),
+                    trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        ToDo().deleteTodo(todo.id!);
+                      });
+                    },
                 ),
-              ),
-            );
-          }),
+                  );
+                },
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -56,11 +73,7 @@ class _TodoListPageState extends State<TodoListPage> {
               return TodoAddPage();
             })
           );
-          if(newListText != null && newListText != '') {
-            setState(() {
-              todoList.add(newListText);
-            });
-          }
+          setState(() {});
         },
         child: Icon(Icons.add),
       ),
@@ -104,6 +117,11 @@ class _TodoAddPageState extends State<TodoAddPage>{
               child: ElevatedButton(
                 // primary: Colors.blue,
                 onPressed: (){
+                  final newTodo = ToDo(
+                    title: _text,
+                    priority: 1,
+                  );
+                  ToDo().insertTodo(newTodo);
                   Navigator.of(context).pop(_text);
                 },
                 child: Text(
@@ -128,10 +146,3 @@ class _TodoAddPageState extends State<TodoAddPage>{
     );
   }
 }
-
-final todoList = [
-  'ジャガイモを買う',
-  'にんじんを買う',
-  'ガソリンを入れる',
-  'お風呂に入る',
-];
