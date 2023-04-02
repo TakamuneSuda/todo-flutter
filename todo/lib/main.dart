@@ -116,13 +116,23 @@ class _TodoAddPageState extends State<TodoAddPage>{
               width: double.infinity,
               child: ElevatedButton(
                 // primary: Colors.blue,
-                onPressed: (){
-                  final newTodo = ToDo(
-                    title: _text,
-                    priority: 1,
-                  );
-                  ToDo().insertTodo(newTodo);
-                  Navigator.of(context).pop(_text);
+                onPressed: () async {
+                  final isExitTitle = ToDo().isExistTitle(_text);
+                  if (await isExitTitle) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('既に同じタイトルのToDoが存在します'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  } else {
+                    final newTodo = ToDo(
+                      title: _text,
+                      priority: 1,
+                    );
+                    ToDo().insertTodo(newTodo);
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   '追加',

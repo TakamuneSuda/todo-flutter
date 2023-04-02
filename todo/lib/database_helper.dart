@@ -35,6 +35,7 @@ class ToDo {
     );
   }
 
+  // 一覧表示用
   Future<List<ToDo>> getAllTodos() async {
     final Database db = await openTodoDatabase();
     final List<Map<String, dynamic>> maps = await db.query('todo');
@@ -47,6 +48,7 @@ class ToDo {
     });
   }
 
+  // 追加用
   Future<void> insertTodo(ToDo todo) async {
     final Database db = await openTodoDatabase();
     await db.insert(
@@ -56,6 +58,7 @@ class ToDo {
       );
   }
 
+  // 削除用
   Future<void> deleteTodo(int id) async {
     final Database db = await openTodoDatabase();
     await db.delete(
@@ -63,5 +66,16 @@ class ToDo {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  // 同じTodoが既に存在するかチェック
+  Future<bool> isExistTitle(String title) async {
+    final Database db = await openTodoDatabase();
+    final result = await db.query(
+      'todo',
+      where: 'LOWER(REPLACE(title, " ", "")) = ?',
+      whereArgs: [title.trim().toLowerCase().replaceAll(" ", "")],
+    );
+    return result.isNotEmpty;
   }
 }
