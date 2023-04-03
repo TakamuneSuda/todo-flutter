@@ -44,7 +44,7 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('リスト一覧'),
+        title: Text('Todoリスト一覧'),
       ),
       body: Center(
         child: FutureBuilder<List<ToDo>>(
@@ -56,20 +56,30 @@ class _TodoListPageState extends State<TodoListPage> {
                 itemCount: todos.length,
                 itemBuilder: (BuildContext context, int index) {
                   final todo = todos[index];
-                  return ListTile(
-                    tileColor
-                      : todo.priority == 0 ? PRIORITY_COLOR_LOW
-                      : todo.priority == 1 ? PRIORITY_COLOR_MIDDLE
-                      : todo.priority == 2 ? PRIORITY_COLOR_HIGH
-                      : null,
-                    title: Text(todo.title ?? ''),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          ToDo().deleteTodo(todo.id!);
-                        });
-                      },
+                  return Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      setState(() {
+                        ToDo().deleteTodo(todo.id!);
+                      });
+                    },
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 20.0),
+                      color: Colors.red,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                    child: ListTile(
+                      tileColor
+                        : todo.priority == 0 ? PRIORITY_COLOR_LOW
+                        : todo.priority == 1 ? PRIORITY_COLOR_MIDDLE
+                        : todo.priority == 2 ? PRIORITY_COLOR_HIGH
+                        : null,
+                      title: Text(todo.title ?? ''),
                     ),
                   );
                 },
@@ -114,7 +124,7 @@ class _TodoAddPageState extends State<TodoAddPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('リスト追加'),
+        title: Text('Todoリスト追加'),
       ),
       body: Container(
         padding: EdgeInsets.all(64),
