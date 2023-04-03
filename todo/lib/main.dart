@@ -7,6 +7,10 @@ int PRIORITY_VALUE_LOW = 0;
 int PRIORITY_VALUE_MIDDLE = 1;
 int PRIORITY_VALUE_HIGH = 2;
 
+Color PRIORITY_COLOR_LOW = Color.fromARGB(255, 225, 237, 255);
+Color PRIORITY_COLOR_MIDDLE = Color.fromARGB(255, 255, 252, 226);
+Color PRIORITY_COLOR_HIGH = Color.fromARGB(255, 255, 221, 220);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dbHelper = ToDo();
@@ -53,8 +57,12 @@ class _TodoListPageState extends State<TodoListPage> {
                 itemBuilder: (BuildContext context, int index) {
                   final todo = todos[index];
                   return ListTile(
+                    tileColor
+                      : todo.priority == 0 ? PRIORITY_COLOR_LOW
+                      : todo.priority == 1 ? PRIORITY_COLOR_MIDDLE
+                      : todo.priority == 2 ? PRIORITY_COLOR_HIGH
+                      : null,
                     title: Text(todo.title ?? ''),
-                    subtitle: Text('Priority: ${todo.priority ?? ''}'),
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
@@ -129,20 +137,21 @@ class _TodoAddPageState extends State<TodoAddPage>{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('優先度'),
+                SizedBox(width: 10),
                 PriorityButton(
                   label: '低',
                   isSelected: _selectedPriority == TodoPriority.low,
                   onTap: () => _onPriorityButtonPressed(TodoPriority.low),
                   value: 'low',
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: 5),
                 PriorityButton(
                   label: '中',
                   isSelected: _selectedPriority == TodoPriority.medium,
                   onTap: () => _onPriorityButtonPressed(TodoPriority.medium),
                   value: 'middle',
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: 5),
                 PriorityButton(
                   label: '高',
                   isSelected: _selectedPriority == TodoPriority.high,
@@ -232,16 +241,16 @@ class PriorityButton extends StatelessWidget {
     Color textColor;
     switch (value) {
       case 'low':
-        backgroundColor = isSelected ? Colors.blue : Colors.white;
-        textColor = isSelected ? Colors.white : Colors.black;
+        backgroundColor = isSelected ? PRIORITY_COLOR_LOW : Colors.white;
+        textColor = isSelected ? Colors.grey : Colors.black;
         break;
       case 'middle':
-        backgroundColor = isSelected ? Colors.yellow : Colors.white;
-        textColor = isSelected ? Colors.white : Colors.black;
+        backgroundColor = isSelected ? PRIORITY_COLOR_MIDDLE : Colors.white;
+        textColor = isSelected ? Colors.grey : Colors.black;
         break;
       case 'high':
-        backgroundColor = isSelected ? Colors.red : Colors.white;
-        textColor = isSelected ? Colors.white : Colors.black;
+        backgroundColor = isSelected ? PRIORITY_COLOR_HIGH : Colors.white;
+        textColor = isSelected ? Colors.grey : Colors.black;
         break;
       default:
         backgroundColor = Colors.white;
@@ -261,8 +270,10 @@ class PriorityButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: 70,
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.bold,
