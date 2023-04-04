@@ -44,7 +44,7 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todoリスト一覧'),
+        title: Text('Todoリスト'),
       ),
       body: Center(
         child: FutureBuilder<List<ToDo>>(
@@ -80,6 +80,14 @@ class _TodoListPageState extends State<TodoListPage> {
                         : todo.priority == 2 ? PRIORITY_COLOR_HIGH
                         : null,
                       title: Text(todo.title ?? ''),
+                      onTap: () async {
+                        final newListText = await Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) {
+                            return TodoAddEditPage(id: todo.id, title:todo.title, priority: todo.priority);
+                          })
+                        );
+                        setState(() {});
+                      },
                     ),
                   );
                 },
@@ -90,11 +98,12 @@ class _TodoListPageState extends State<TodoListPage> {
           },
         ),
       ),
+      // 新規追加ボタン
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final newListText = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return TodoAddPage();
+              return TodoAddEditPage();
             })
           );
           setState(() {});
@@ -105,14 +114,33 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 }
 
-class TodoAddPage extends StatefulWidget {
+class TodoAddEditPage extends StatefulWidget {
+  final int? id;
+  final String? title;
+  final int? priority;
+
+  TodoAddEditPage({this.id, this.title, this.priority});
+
   @override
-  _TodoAddPageState createState() => _TodoAddPageState();
+  _TodoAddEditPageState createState() => _TodoAddEditPageState();
 }
 
-class _TodoAddPageState extends State<TodoAddPage>{
-  String _text = '';
-  TodoPriority? _selectedPriority = TodoPriority.low;
+class _TodoAddEditPageState extends State<TodoAddEditPage>{
+  late String _text = '';
+  late TodoPriority? _selectedPriority = TodoPriority.low;
+  bool _isEditMode = false;
+  final _controller = TextEditingController();
+
+  // 編集モードに切り替え
+  @override
+  void initState() {
+    if(widget.title != null) {
+      _isEditMode = true;
+      _text = widget.title!;
+      _controller.text = _text;
+      _selectedPriority = TodoPriority.values[widget.priority!];
+    }
+  }
 
   void _onPriorityButtonPressed(TodoPriority priority) {
     setState(() {
@@ -124,7 +152,7 @@ class _TodoAddPageState extends State<TodoAddPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todoリスト追加'),
+        title: Text(_isEditMode ? 'Todo編集' : 'Todo追加'),
       ),
       body: Container(
         padding: EdgeInsets.all(64),
@@ -134,6 +162,7 @@ class _TodoAddPageState extends State<TodoAddPage>{
             Text(_text, style: TextStyle(color: Colors.blue)),
             const SizedBox(height: 8,),
             TextField(
+              controller: _controller,
               onChanged: (String value){
                 setState(() {
                   _text = value;
@@ -178,7 +207,7 @@ class _TodoAddPageState extends State<TodoAddPage>{
               child: ElevatedButton(
                 // primary: Colors.blue,
                 onPressed: () async {
-                  final isExitTitle = ToDo().isExistTitle(_text);
+                  final isExitTitle = ToDo().isExistTitle(widget.id, _text);
                   if (await isExitTitle) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -196,10 +225,15 @@ class _TodoAddPageState extends State<TodoAddPage>{
                       selectedPriorityValue = PRIORITY_VALUE_HIGH;
                     }
                     final newTodo = ToDo(
+                      id: widget.id,
                       title: _text,
                       priority: selectedPriorityValue,
                     );
-                    ToDo().insertTodo(newTodo);
+                    if (_isEditMode) {
+                      ToDo().updateTodo(newTodo);
+                    } else {
+                      ToDo().insertTodo(newTodo);
+                    }
                     Navigator.of(context).pop();
                   }
                 },
