@@ -58,6 +58,17 @@ class ToDo {
       );
   }
 
+  // 編集用
+  Future<void> updateTodo(ToDo todo) async {
+    final Database db = await openTodoDatabase();
+    await db.update(
+      'todo',
+      todo.toMap(),
+      where: "id = ?",
+      whereArgs: [todo.id],
+      );
+  }
+
   // 削除用
   Future<void> deleteTodo(int id) async {
     final Database db = await openTodoDatabase();
@@ -69,13 +80,24 @@ class ToDo {
   }
 
   // 同じTodoが既に存在するかチェック
-  Future<bool> isExistTitle(String title) async {
+  Future<bool> isExistTitle(int? id, String title) async {
     final Database db = await openTodoDatabase();
-    final result = await db.query(
-      'todo',
-      where: 'LOWER(REPLACE(title, " ", "")) = ?',
-      whereArgs: [title.trim().toLowerCase().replaceAll(" ", "")],
-    );
+    final List<Map<String, dynamic>> result;
+    // 新規作成
+    if ( id == null) {
+      result = await db.query(
+        'todo',
+        where: 'LOWER(REPLACE(title, " ", "")) = ?',
+        whereArgs: [title.trim().toLowerCase().replaceAll(" ", "")],
+      );
+    // 編集
+    } else {
+      result = await db.query(
+        'todo',
+        where: 'LOWER(REPLACE(title, " ", "")) = ? AND id <> ?',
+        whereArgs: [title.trim().toLowerCase().replaceAll(" ", ""), id],
+      );
+    }
     return result.isNotEmpty;
   }
 }
