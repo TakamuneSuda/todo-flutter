@@ -162,6 +162,9 @@ class _TodoAddEditPageState extends State<TodoAddEditPage>{
             Text(_text, style: TextStyle(color: Colors.blue)),
             const SizedBox(height: 8,),
             TextField(
+              decoration: InputDecoration(
+                hintText: 'タイトルを入力してください。'
+              ),
               controller: _controller,
               onChanged: (String value){
                 setState(() {
@@ -206,37 +209,39 @@ class _TodoAddEditPageState extends State<TodoAddEditPage>{
               width: double.infinity,
               child: ElevatedButton(
                 // primary: Colors.blue,
-                onPressed: () async {
-                  final isExitTitle = ToDo().isExistTitle(widget.id, _text);
-                  if (await isExitTitle) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('既に同じタイトルのToDoが存在します'),
-                        duration: Duration(seconds: 3),
-                      ),
-                    );
-                  } else {
-                    int selectedPriorityValue = PRIORITY_VALUE_LOW;
-                    if (_selectedPriority == TodoPriority.low) {
-                      selectedPriorityValue = PRIORITY_VALUE_LOW;
-                    } else if (_selectedPriority == TodoPriority.medium) {
-                      selectedPriorityValue = PRIORITY_VALUE_MIDDLE;
-                    } else if (_selectedPriority == TodoPriority.high) {
-                      selectedPriorityValue = PRIORITY_VALUE_HIGH;
-                    }
-                    final newTodo = ToDo(
-                      id: widget.id,
-                      title: _text,
-                      priority: selectedPriorityValue,
-                    );
-                    if (_isEditMode) {
-                      ToDo().updateTodo(newTodo);
+                onPressed
+                  : _text.isEmpty ? null
+                  : () async {
+                    final isExitTitle = ToDo().isExistTitle(widget.id, _text);
+                    if (await isExitTitle) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('既に同じタイトルのToDoが存在します'),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
                     } else {
-                      ToDo().insertTodo(newTodo);
+                      int selectedPriorityValue = PRIORITY_VALUE_LOW;
+                      if (_selectedPriority == TodoPriority.low) {
+                        selectedPriorityValue = PRIORITY_VALUE_LOW;
+                      } else if (_selectedPriority == TodoPriority.medium) {
+                        selectedPriorityValue = PRIORITY_VALUE_MIDDLE;
+                      } else if (_selectedPriority == TodoPriority.high) {
+                        selectedPriorityValue = PRIORITY_VALUE_HIGH;
+                      }
+                      final newTodo = ToDo(
+                        id: widget.id,
+                        title: _text,
+                        priority: selectedPriorityValue,
+                      );
+                      if (_isEditMode) {
+                        ToDo().updateTodo(newTodo);
+                      } else {
+                        ToDo().insertTodo(newTodo);
+                      }
+                      Navigator.of(context).pop();
                     }
-                    Navigator.of(context).pop();
-                  }
-                },
+                  },
                 child: Text(
                   '追加',
                   style: TextStyle(color: Colors.white),
