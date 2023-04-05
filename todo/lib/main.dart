@@ -25,7 +25,6 @@ class MyTodoApp extends StatelessWidget {
       title: 'My Todo App',
       theme: ThemeData(
         primarySwatch: themeColor,
-      //  color
       ),
       home: TodoListPage(),
     );
