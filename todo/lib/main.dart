@@ -1,15 +1,13 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:todo/constants.dart';
 import 'package:todo/database_helper.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 int PRIORITY_VALUE_LOW = 0;
 int PRIORITY_VALUE_MIDDLE = 1;
 int PRIORITY_VALUE_HIGH = 2;
-
-Color PRIORITY_COLOR_LOW = Color.fromARGB(255, 225, 237, 255);
-Color PRIORITY_COLOR_MIDDLE = Color.fromARGB(255, 255, 252, 226);
-Color PRIORITY_COLOR_HIGH = Color.fromARGB(255, 255, 221, 220);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +24,8 @@ class MyTodoApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Todo App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: themeColor,
+      //  color
       ),
       home: TodoListPage(),
     );
@@ -67,7 +66,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     background: Container(
                       alignment: Alignment.centerRight,
                       padding: EdgeInsets.only(right: 20.0),
-                      color: Colors.red,
+                      color: HexColor("#ff2222"),
                       child: Icon(
                         Icons.delete,
                         color: Colors.white,
@@ -75,9 +74,9 @@ class _TodoListPageState extends State<TodoListPage> {
                     ),
                     child: ListTile(
                       tileColor
-                        : todo.priority == 0 ? PRIORITY_COLOR_LOW
-                        : todo.priority == 1 ? PRIORITY_COLOR_MIDDLE
-                        : todo.priority == 2 ? PRIORITY_COLOR_HIGH
+                        : todo.priority == 0 ? AppColors.PRIORITY_COLOR_LOW
+                        : todo.priority == 1 ? AppColors.PRIORITY_COLOR_MIDDLE
+                        : todo.priority == 2 ? AppColors.PRIORITY_COLOR_HIGH
                         : null,
                       title: Text(todo.title ?? ''),
                       onTap: () async {
@@ -208,7 +207,9 @@ class _TodoAddEditPageState extends State<TodoAddEditPage>{
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                // primary: Colors.blue,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.SUBMIT_BUTTON_COLOR,
+                ),
                 onPressed
                   : _text.isEmpty ? null
                   : () async {
@@ -290,15 +291,15 @@ class PriorityButton extends StatelessWidget {
     Color textColor;
     switch (value) {
       case 'low':
-        backgroundColor = isSelected ? PRIORITY_COLOR_LOW : Colors.white;
+        backgroundColor = isSelected ? AppColors.PRIORITY_COLOR_LOW : Colors.white;
         textColor = isSelected ? Colors.grey : Colors.black;
         break;
       case 'middle':
-        backgroundColor = isSelected ? PRIORITY_COLOR_MIDDLE : Colors.white;
+        backgroundColor = isSelected ? AppColors.PRIORITY_COLOR_MIDDLE : Colors.white;
         textColor = isSelected ? Colors.grey : Colors.black;
         break;
       case 'high':
-        backgroundColor = isSelected ? PRIORITY_COLOR_HIGH : Colors.white;
+        backgroundColor = isSelected ? AppColors.PRIORITY_COLOR_HIGH : Colors.white;
         textColor = isSelected ? Colors.grey : Colors.black;
         break;
       default:
