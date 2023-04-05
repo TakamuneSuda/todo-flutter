@@ -26,3 +26,7 @@ MaterialColor themeColor = MaterialColor(
     900: HexColor("#949494").withOpacity(1.0),
   },
 );
+
+int PRIORITY_VALUE_LOW = 0;
+int PRIORITY_VALUE_MIDDLE = 1;
+int PRIORITY_VALUE_HIGH = 2;
