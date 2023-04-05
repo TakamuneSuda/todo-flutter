@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo/constants.dart';
-import 'package:todo/model/database_helper.dart';
-import 'package:todo/screen/list_screen.dart';
+import 'constants.dart';
+import 'model/database_helper.dart';
+import 'screen/list_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
