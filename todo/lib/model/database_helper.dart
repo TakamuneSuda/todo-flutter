@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ToDo {
+class TodoDatabase{
   final int? id;
   final String? title;
   final int? priority;
 
-  ToDo({this.id, this.title, this.priority});
+  TodoDatabase({this.id, this.title, this.priority});
 
   Map<String, dynamic> toMap(){
     return {
@@ -36,11 +36,11 @@ class ToDo {
   }
 
   // 一覧表示用
-  Future<List<ToDo>> getAllTodos() async {
+  Future<List<TodoDatabase>> getAllTodos() async {
     final Database db = await openTodoDatabase();
     final List<Map<String, dynamic>> maps = await db.query('todo');
     return List.generate(maps.length, (i) {
-      return ToDo(
+      return TodoDatabase(
         id: maps[i]['id'],
         title: maps[i]['title'],
         priority: maps[i]['priority'],
@@ -49,7 +49,7 @@ class ToDo {
   }
 
   // 追加用
-  Future<void> insertTodo(ToDo todo) async {
+  Future<void> insertTodo(TodoDatabase todo) async {
     final Database db = await openTodoDatabase();
     await db.insert(
       'todo',
@@ -59,7 +59,7 @@ class ToDo {
   }
 
   // 編集用
-  Future<void> updateTodo(ToDo todo) async {
+  Future<void> updateTodo(TodoDatabase todo) async {
     final Database db = await openTodoDatabase();
     await db.update(
       'todo',

@@ -15,10 +15,10 @@ class TodoAddEditPage extends StatefulWidget {
 }
 
 class _TodoAddEditPageState extends State<TodoAddEditPage>{
+  final _controller = TextEditingController(text: '');
   late String _text = '';
-  late TodoPriority? _selectedPriority = TodoPriority.low;
+  TodoPriority? _selectedPriority = TodoPriority.low;
   bool _isEditMode = false;
-  final _controller = TextEditingController();
 
   // 編集モードに切り替え
   @override
@@ -103,7 +103,7 @@ class _TodoAddEditPageState extends State<TodoAddEditPage>{
                 onPressed
                   : _text.isEmpty ? null
                   : () async {
-                    final isExitTitle = ToDo().isExistTitle(widget.id, _text);
+                    final isExitTitle = TodoDatabase().isExistTitle(widget.id, _text);
                     if (await isExitTitle) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -120,21 +120,21 @@ class _TodoAddEditPageState extends State<TodoAddEditPage>{
                       } else if (_selectedPriority == TodoPriority.high) {
                         selectedPriorityValue = PRIORITY_VALUE_HIGH;
                       }
-                      final newTodo = ToDo(
+                      final newTodo = TodoDatabase(
                         id: widget.id,
                         title: _text,
                         priority: selectedPriorityValue,
                       );
                       if (_isEditMode) {
-                        ToDo().updateTodo(newTodo);
+                        TodoDatabase().updateTodo(newTodo);
                       } else {
-                        ToDo().insertTodo(newTodo);
+                        TodoDatabase().insertTodo(newTodo);
                       }
                       Navigator.of(context).pop();
                     }
                   },
                 child: Text(
-                  '追加',
+                  _isEditMode ? '更新' : '追加',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
