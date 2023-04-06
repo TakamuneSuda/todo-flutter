@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+String APP_NAME = 'My Todo App';
+
 class AppColors {
-  static Color THEME_COLOR = HexColor("##A1FF7A");
+  static Color THEME_COLOR = HexColor("#A1FF7A");
 
   static Color SUBMIT_BUTTON_COLOR = HexColor("#6ECEFD");
 
